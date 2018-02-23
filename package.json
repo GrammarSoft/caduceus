@@ -1,0 +1,16 @@
+{
+	"name": "caduceus",
+	"version": "1.0.0",
+	"description": "Message exchanger",
+	"homepage": "https://grammarsoft.com/",
+	"main": "app/server.js",
+	"scripts": {
+		"start": "node app/server.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Tino Didriksen <mail@tinodidriksen.com>",
+	"license": "GPL-3.0-or-later",
+	"dependencies": {
+		"ws": "^4.1.0"
+	}
+}
