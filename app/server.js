@@ -48,7 +48,9 @@ function heartbeat() {
 
 function terminate(ws) {
 	if (ws.cName && channels.hasOwnProperty(ws.cName)) {
+		console.log('Disconnected channel %s', ws.cName);
 		delete channels[ws.cName];
+		ws.cName = null;
 	}
 	ws.close();
 	return ws.terminate();
@@ -63,32 +65,14 @@ function incoming(message) {
 		let msg = JSON.parse(message);
 
 		if (msg.a === 'create-channel') {
-			if (!verify_signature(msg.a, msg.sig)) {
-				send(this, {a: msg.a, e: 'invalid-sig'});
-				return terminate(this);
-			}
 			const name = Crypto.randomBytes(32).toString('base64').replace(/=/g, '').replace(/\+/g, '_').replace(/\//g, '-');
 			channels[name] = {
 				cTime: Date.now(),
-				ws: null,
+				ws: this,
 			};
 			console.log('Created channel %s', name);
-			send(this, {a: msg.a, r: name});
-			return terminate(this);
-		}
-		else if (msg.a === 'listen-channel') {
-			if (!channels.hasOwnProperty(msg.name)) {
-				send(this, {a: msg.a, e: 'no-such-channel'});
-				return terminate(this);
-			}
-			if (channels[msg.name].ws) {
-				send(this, {a: msg.a, e: 'channel-occupied'});
-				return terminate(this);
-			}
-			console.log('Listener attached on channel %s', msg.name);
-			channels[msg.name].ws = this;
 			this.cName = msg.name;
-			send(this, {a: msg.a, r: true});
+			send(this, {a: msg.a, r: name});
 		}
 		else if (msg.a === 'push-channel') {
 			if (!verify_signature(msg.a+msg.name, msg.sig)) {
@@ -127,6 +111,19 @@ wss.on('connection', function connection(ws) {
 	ws.on('pong', heartbeat);
 
 	ws.on('message', incoming);
+
+	ws.on('close', function close() {
+		if (this.cName) {
+			console.log('Disconnected channel %s', this.cName);
+			delete channels[this.cName];
+			this.cName = null;
+		}
+	});
+
+	ws.on('error', function error(e) {
+		console.log(e);
+		terminate(this);
+	});
 });
 
 const reaper = setInterval(function reaper() {
@@ -141,6 +138,7 @@ const reaper = setInterval(function reaper() {
 			console.log('Channel timeout: 10 minute hard limit');
 			if (channels[name].ws) {
 				send(channels[name].ws, {e: 'channel-timeout'});
+				channels[name].ws.close();
 				channels[name].ws.terminate();
 			}
 			delete channels[name];
