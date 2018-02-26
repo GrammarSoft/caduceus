@@ -3,6 +3,14 @@
 	"version": "1.0.0",
 	"description": "Message exchanger",
 	"homepage": "https://grammarsoft.com/",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/GrammarSoft/caduceus"
+	},
+	"bugs": {
+		"url": "https://github.com/GrammarSoft/caduceus/issues",
+		"email": "mail@tinodidriksen.com"
+	},
 	"main": "app/server.js",
 	"scripts": {
 		"start": "node app/server.js",
