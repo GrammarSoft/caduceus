@@ -50,6 +50,7 @@ function terminate(ws) {
 	if (ws.cName && channels.hasOwnProperty(ws.cName)) {
 		delete channels[ws.cName];
 	}
+	ws.close();
 	return ws.terminate();
 }
 
@@ -66,7 +67,7 @@ function incoming(message) {
 				send(this, {a: msg.a, e: 'invalid-sig'});
 				return terminate(this);
 			}
-			const name = Crypto.randomBytes(32).toString('base64').replace(/=/g, '');
+			const name = Crypto.randomBytes(32).toString('base64').replace(/=/g, '').replace(/\+/g, '_').replace(/\//g, '-');
 			channels[name] = {
 				cTime: Date.now(),
 				ws: null,
