@@ -89,8 +89,8 @@ function incoming(message) {
 			}
 			console.log('Pushing to channel %s', msg.name);
 			send(channels[msg.name].ws, msg.data);
-			terminate(this);
 			terminate(channels[msg.name].ws);
+			return terminate(this);
 		}
 		else {
 			console.log('Error: Unexpected data "%s"', message);
@@ -135,10 +135,15 @@ const reaper = setInterval(function reaper() {
 			continue;
 		}
 		if (channels[name].cTime < timeout) {
-			console.log('Channel timeout: 10 minute hard limit');
+			console.log('Channel %s timeout: 10 minute hard limit', name);
 			if (channels[name].ws) {
-				send(channels[name].ws, {e: 'channel-timeout'});
-				channels[name].ws.close();
+				try {
+					send(channels[name].ws, {e: 'channel-timeout'});
+					channels[name].ws.close();
+				}
+				catch (e) {
+					// We don't really care...
+				}
 				channels[name].ws.terminate();
 			}
 			delete channels[name];
