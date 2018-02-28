@@ -90,6 +90,7 @@ function incoming(message) {
 			console.log('Pushing to channel %s', msg.name);
 			send(channels[msg.name].ws, msg.data);
 			terminate(channels[msg.name].ws);
+			delete channels[msg.name];
 			return terminate(this);
 		}
 		else {
