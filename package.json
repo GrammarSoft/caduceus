@@ -19,6 +19,6 @@
 	"author": "Tino Didriksen <mail@tinodidriksen.com>",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
-		"ws": "^4.1.0"
+		"ws": "^8"
 	}
 }

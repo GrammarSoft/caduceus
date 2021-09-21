@@ -60,7 +60,8 @@ function send(ws, data) {
 	return ws.send(JSON.stringify(data));
 }
 
-function incoming(message) {
+function incoming(data, isBinary) {
+	const message = isBinary ? data : data.toString();
 	try {
 		let msg = JSON.parse(message);
 

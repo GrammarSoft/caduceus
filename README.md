@@ -7,4 +7,4 @@ Very simple message broker. Designed for login tokens for the [GrammarSoft Proof
 
 ## External Dependencies
 The code pulls in these external dependencies:
-* `ws`: [Node.js WebSockets 4.1.0](https://github.com/websockets/ws) via [npm](https://www.npmjs.com/package/ws)
+* `ws`: [Node.js WebSockets 8.x](https://github.com/websockets/ws) via [npm](https://www.npmjs.com/package/ws)
